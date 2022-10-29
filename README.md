@@ -291,6 +291,31 @@ Kelompok A02
 	```
 
 8. Setelah melakukan konfigurasi server, maka dilakukan konfigurasi Webserver. Pertama dengan webserver www.wise.A02.com. Pertama, Loid membutuhkan webserver dengan DocumentRoot pada /var/www/wise.A02.com
++ Berlint
+	script:
+	```
+	apt-get install -y apache2
+	cp ~/no7/000-default.conf /etc/apache2/sites-available/000-default.conf
+	mkdir /var/www/wise.A02.com
+	service apache2 start
+	```
+	
+	000-default.conf
+	```
+	<VirtualHost *:80>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/wise.A02.com
+        ServerName wise.A02.com
+        ServerAlias www.wise.A02.com
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+	</VirtualHost>
+
+	```
+
 
 9. Setelah itu, Loid juga membutuhkan agar url www.wise.A02.com/index.php/home dapat menjadi menjadi www.wise.A02.com/home
 
