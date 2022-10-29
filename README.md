@@ -483,6 +483,49 @@ Kelompok A02
 
 14. Loid meminta agar www.strix.operation.wise.A02.com hanya bisa diakses dengan port 15000 dan port 15500
 
++ Eden
+
+	script:
+	```
+	cp ~/no13/default-15000.conf /etc/apache2/sites-available/default-15000.conf
+	cp ~/no13/default-15000.conf /etc/apache2/sites-available/default-15500.conf
+	cp ~/no13/ports.conf /etc/apache2/ports.conf
+	mkdir /var/www/strix.operation.wise.A02.com
+	cp ~/res/strix.operation.wise/* /var/www/strix.operation.wise.A02.com/
+	a2ensite default-15000.conf
+	a2ensite default-15500.conf
+	service apache2 restart
+	```
+	
+	default-15000.conf
+	```
+	<VirtualHost *:15000>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/strix.operation.wise.A02.com
+        ServerName strix.operation.wise.A02.com
+        ServerAlias www.strix.operation.wise.A02.com
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+	</VirtualHost>
+	```
+	
+	ports.conf
+	```
+	Listen 80
+	Listen 15000
+	Listen 15500
+
+	<IfModule ssl_module>
+        Listen 443
+	</IfModule>
+
+	<IfModule mod_gnutls.c>
+        Listen 443
+	</IfModule>
+	```
 15. dengan autentikasi username Twilight dan password opStrix dan file di /var/www/strix.operation.wise.A02
 
 16. dan setiap kali mengakses IP Eden akan dialihkan secara otomatis ke www.wise.A02.com
