@@ -291,7 +291,7 @@ Kelompok A02
 	```
 
 8. Setelah melakukan konfigurasi server, maka dilakukan konfigurasi Webserver. Pertama dengan webserver www.wise.A02.com. Pertama, Loid membutuhkan webserver dengan DocumentRoot pada /var/www/wise.A02.com
-+ Berlint
++ WISE
 	script:
 	```
 	apt-get install -y apache2
@@ -318,6 +318,33 @@ Kelompok A02
 
 
 9. Setelah itu, Loid juga membutuhkan agar url www.wise.A02.com/index.php/home dapat menjadi menjadi www.wise.A02.com/home
+
++ WISE
+	script:
+	```
+	apt-get install libapache2-mod-php7.0
+	cp ~/no8/000-default.conf /etc/apache2/sites-available/000-default.conf
+	cp ~/res/wise/* /var/www/wise.A02.com/
+	service apache2 restart
+	```
+	
+	000-default.conf
+	```
+	<VirtualHost *:80>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/wise.A02.com
+        ServerName wise.A02.com
+        ServerAlias www.wise.A02.com
+
+        Alias "/home" "/var/www/wise.A02.com/index.php"
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+	</VirtualHost>
+	```
+	
 
 10. Setelah itu, pada subdomain www.eden.wise.A02.com, Loid membutuhkan penyimpanan aset yang memiliki DocumentRoot pada /var/www/eden.wise.A02.com
 
