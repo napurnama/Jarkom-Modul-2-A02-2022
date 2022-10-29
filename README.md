@@ -409,7 +409,7 @@ Kelompok A02
 
 12. Tidak hanya itu, Loid juga ingin menyiapkan error file 404.html pada folder /error untuk mengganti error kode pada apache
 
-+Eden
++ Eden
 	script:
 	```
 	cp ~/no11/000-default.conf /etc/apache2/sites-available/000-default.conf
