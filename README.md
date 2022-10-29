@@ -409,6 +409,41 @@ Kelompok A02
 
 12. Tidak hanya itu, Loid juga ingin menyiapkan error file 404.html pada folder /error untuk mengganti error kode pada apache
 
++Eden
+	script:
+	```
+	cp ~/no11/000-default.conf /etc/apache2/sites-available/000-default.conf
+	service apache9 restart
+	```
+	
+	
+	000-default.conf
+	
+	```
+	<VirtualHost *:80>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/eden.wise.A02.com
+        ServerName eden.wise.A02.com
+        ServerAlias www.eden.wise.A02.com
+
+        <Directory /var/www/eden.wise.A02.com/error>
+                Options -Indexes
+        </Directory>
+
+        <Directory /var/www/eden.wise.A02.com/public>
+                Options +Indexes
+        </Directory>
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        ErrorDocument 404 /error/404.html
+
+	</VirtualHost>
+
+	```
+
 13. Loid juga meminta Franky untuk dibuatkan konfigurasi virtual host. Virtual host ini bertujuan untuk dapat mengakses file asset www.eden.wise.A02.com/public/js menjadi www.eden.wise.A02.com/js
 
 14. Loid meminta agar www.strix.operation.wise.A02.com hanya bisa diakses dengan port 15000 dan port 15500
