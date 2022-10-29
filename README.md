@@ -528,6 +528,29 @@ Kelompok A02
 	```
 15. dengan autentikasi username Twilight dan password opStrix dan file di /var/www/strix.operation.wise.A02
 
+default-15000.conf
+```
+<VirtualHost *:15000>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/strix.operation.wise.A02.com
+        ServerName strix.operation.wise.A02.com
+        ServerAlias www.strix.operation.wise.A02.com
+
+        <Directory "var/www/strix.operation.wise.A02.com">
+                AuthType Basic
+                AuthName "Restricted Content"
+                AuthUserFile /etc/apache2/.htpasswd
+                Require valid-user
+        </Directory>
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+</VirtualHost>
+
+```
+
 16. dan setiap kali mengakses IP Eden akan dialihkan secara otomatis ke www.wise.A02.com
 
 17. Karena website www.eden.wise.A02.com semakin banyak pengunjung dan banyak modifikasi sehingga banyak gambar-gambar yang random, maka Loid ingin mengubah request gambar yang memiliki substring “eden” akan diarahkan menuju eden.png. Bantulah Agent Twilight dan Organisasi WISE menjaga perdamaian!
