@@ -1,185 +1,315 @@
-# Jarkom-Modul-2-A02-2022
-## Topologi
-1. Ostania 
-3. SSS - 10.0.1.2
-4. Garden - 10.0.1.3
-5. Berlint - 10.0.2.2
-6. Eden - 10.0.2.3
-7. WISE - 10.0.3.2
+# Jarkom Modul 2 2022
+Kelompok A02
++ Ferdinand Putra Gumilang Silalahi - 5025201176
++ Naufal Adli Purnama - 5025201195
++ Bimantara Tito Wahyudi - 5025201227
 
-## Praktik
+## Soal
+1. WISE akan dijadikan sebagai DNS Master, Berlint akan dijadikan DNS Slave, dan Eden akan digunakan sebagai Web Server. Terdapat 2 Client yaitu SSS, dan Garden. Semua node terhubung pada router Ostania, sehingga dapat mengakses internet.
 
-### A Buat Topologi
+### Dokumentasi Topologi
+### Dokumentasi network configuration WISE
+### Dokumentasi WISE Ping Google.com
 
-Buat topologi seperti di [pengenalan GNS3](https://github.com/arsitektur-jaringan-komputer/Modul-Jarkom/tree/master/Modul-GNS3#membuat-topologi) kemarin.
+2. Untuk mempermudah mendapatkan informasi mengenai misi dari Handler, bantulah Loid membuat website utama dengan akses wise.A02.com dengan alias www.wise.A02.com pada folder wise. 
 
-Kita akan membuat node `WISE` sebagai DNS server.
-
-### A Instalasi bind
-
-- Buka *WISE* dan update package lists dengan menjalankan command:
-
++ **WISE**
+	script:
 	```
-	apt-get update
-	```
-
-- Setalah melakukan update silahkan install aplikasi bind9 pada *WISE* dengan perintah:
-
-	```
-	apt-get install bind9 -y
+	apt-get -y install bind9
+	cp ~/no1/named.conf.local /etc/bind/named.conf.local
+	mkdir /etc/bind/wise
+	cp ~/no1/wise.A02.com /etc/bind/wise/wise.A02.com
+	service bind9 restart
 	```
 
-![instal bind9](images/1.png)
-
-### B Pembuatan Domain
-Pada sesilab ini kita akan membuat domain **wise.A02.com**.
-
-- Lakukan perintah pada *WISE*. Isikan seperti berikut:
-
-  ```
-  nano /etc/bind/named.conf.local
-  ```
-
-- Isikan configurasi domain **wise.A02.com** sesuai dengan syntax berikut:
-
-  ```
-  zone "wise.A02.com" {
-  	type master;
-  	file "/etc/bind/wise/wise.A02.com";
-  };
-  ```
-
-![config wise.A02.com](images/2-2.png)
-
-- Buat folder **wise** di dalam **/etc/bind**
-
-  ```
-  mkdir /etc/bind/wise
-  ```
-
-- Copykan file **db.local** pada path **/etc/bind** ke dalam folder **wise** yang baru saja dibuat dan ubah namanya menjadi **wise.A02.com**
-
-  ```
-  cp /etc/bind/db.local /etc/bind/wise/wise.A02.com
-  ```
-
-- Kemudian buka file **wise.A02.com** dan edit seperti gambar berikut dengan IP *WISE* 10.0.3.2:
-
-  ```
-  nano /etc/bind/wise/wise.A02.com
-  ```
-
-![konfig wise.A02](images/3-1.png)
-
-- Restart bind9 dengan perintah 
-
-  ```
-  service bind9 restart
-  
-  ATAU
-  
-  named -g //Bisa digunakan untuk restart sekaligus debugging
-  ```
-
-
-
-### C Setting nameserver pada client
-
-Domain yang kita buat tidak akan langsung dikenali oleh client oleh sebab itu kita harus merubah settingan nameserver yang ada pada client kita.
-
-- Pada client *SSS* arahkan nameserver menuju IP *WISE* dengan mengedit file _resolv.conf_ dengan mengetikkan perintah 
-
+	isi ~/no1/named.conf.local:
 	```
-	nano /etc/resolv.conf
+	zone "wise.A02.com" {
+		type master;
+		file "/etc/bind/wise/wise.A02.com";
+	};
 	```
 
-![ping](images/4-1.png)
+	isi ~/no1/wise.A02.com:
+	```
+	;
+	; BIND data file for local loopback interface
+	;
+	$TTL    604800
+	@       IN      SOA     wise.A02.com. root.wise.A02.com. (
+				 2022102601         ; Serial
+						 604800         ; Refresh
+							86400         ; Retry
+						2419200         ; Expire
+						 604800 )       ; Negative Cache TTL
+	;
+	@       IN      NS      wise.A02.com.
+	@       IN      A       10.0.2.2
+	www     IN      CNAME   wise.A02.com.
+	@       IN      AAAA    ::1
+	```
 
-- Untuk mencoba koneksi DNS, lakukan ping domain **wise.A02.com** dengan melakukan  perintah berikut pada client *SSS*
+3. Setelah itu ia juga ingin membuat subdomain eden.wise.A02.com dengan alias www.eden.wise.A02.com yang diatur DNS-nya di WISE dan mengarah ke Eden
 
-  ```
-  ping wise.A02.com -c 5
-  ```
++ **WISE**
+	script:
+	```
+	cp ~/no2/wise.A02.com /etc/bind/wise/wise.A02.com
+	service bind9 restart
+	```
 
-![ping](images/5-1.png)
+	isi ~/no2/wise.A02.com:
+	```
+	;
+	; BIND data file for local loopback interface
+	;
+	$TTL    604800
+	@       IN      SOA     wise.A02.com. root.wise.A02.com. (
+				 2022102601         ; Serial
+						 604800         ; Refresh
+							86400         ; Retry
+						2419200         ; Expire
+						 604800 )       ; Negative Cache TTL
+	;
+	@       				IN      NS      wise.A02.com.
+	@       				IN      A       10.0.2.2
+	www     				IN      CNAME   wise.A02.com.
+	eden    				IN      A       10.0.3.3
+	www.eden        IN      CNAME   eden.wise.A02.com.
+	@       				IN      AAAA    ::1
+	```
+
+4. Buat juga reverse domain untuk domain utama
+
++ **WISE**
+	script:
+	```
+	cp ~/no3/named.conf.local /etc/bind/named.conf.local
+	cp ~/no3/2.0.10.in-addr.arpa /etc/bind/wise/2.0.10.in-addr.arpa
+	service bind9 restart
+	```
+
+	isi ~/no3/named.conf.local:
+	```
+	zone "wise.A02.com" {
+		type master;
+		file "/etc/bind/wise/wise.A02.com";
+	};
+
+	zone "2.0.10.in-addr.arpa" {
+		type master;
+		file "/etc/bind/wise/2.0.10.in-addr.arpa";
+	};
+	```
+
+	isi ~/no3/2.0.10.in-addr.arpa:
+	```
+	;
+	; BIND data file for local loopback interface
+	;
+	$TTL    604800
+	@       IN      SOA     wise.A02.com. root.wise.A02.com. (
+				 2022102601         ; Serial
+						 604800         ; Refresh
+							86400         ; Retry
+						2419200         ; Expire
+						 604800 )       ; Negative Cache TTL
+	;
+	2.0.10.in-addr.arpa.    IN      NS      wise.A02.com.
+	2                       IN      PTR     wise.A02.com.
+	```
+
+5. Agar dapat tetap dihubungi jika server WISE bermasalah, buatlah juga Berlint sebagai DNS Slave untuk domain utama
+
++ **WISE**
+	script:
+	```
+	cp ~/no4/named.conf.local /etc/bind/named.conf.local
+	service bind9 restart
+	```
+
+	isi ~/no4/named.conf.local:
+	```
+	zone "wise.A02.com" {
+		type master;
+		file "/etc/bind/wise/wise.A02.com";
+		notify yes;
+		also-notify { 10.0.3.2; };
+		allow-transfer { 10.0.3.2; };
+	};
+
+	zone "2.0.10.in-addr.arpa" {
+		type master;
+		file "/etc/bind/wise/2.0.10.in-addr.arpa";
+	};
+	```
+
++ **Berlint**
+	script:
+	```
+	apt-get install -y bind9
+	cp ~/no4/named.conf.local /etc/bind/named.conf.local
+	service bind9 restart
+	```
+
+	isi ~/no4/named.conf.local:
+	```
+	zone "wise.A02.com" {
+		type slave;
+		masters { 10.0.2.2; };
+		file "/var/lib/bind/wise.A02.com";
+	};
+	```
+
+6. Karena banyak informasi dari Handler, buatlah subdomain yang khusus untuk operation yaitu operation.wise.A02.com dengan alias www.operation.wise.A02.com yang didelegasikan dari WISE ke Berlint dengan IP menuju ke Eden dalam folder operation
++ WISE
+	script:
+	```
+	cp ~/no5/wise.A02.com /etc/bind/wise/wise.A02.com
+	cp ~/no5/named.conf.options /etc/bind/named.conf.options
+	service bind9 restart
+	```
+
+	isi ~/no5/wise.A02.com:
+	```
+	;
+	; BIND data file for local loopback interface
+	;
+	$TTL    604800
+	@       IN      SOA     wise.A02.com. root.wise.A02.com. (
+				 2022102601         ; Serial
+						 604800         ; Refresh
+							86400         ; Retry
+						2419200         ; Expire
+						 604800 )       ; Negative Cache TTL
+	;
+	@       				IN      NS      wise.A02.com.
+	@       				IN      A       10.0.2.2
+	www     				IN      CNAME   wise.A02.com.
+	eden    				IN      A       10.0.3.3
+	www.eden        IN      CNAME   eden.wise.A02.com.
+	ns1     				IN      A       10.0.3.2
+	operation       IN      NS      ns1
+	@       				IN      AAAA    ::1
+	```
+
+	isi ~/no5/named.conf.options:
+	```
+	options {
+		directory "/var/cache/bind";
+
+		//dnssec-validation auto;
+		allow-query{ any; };
+
+		auth-nxdomain no;    # conform to RFC1035
+		listen-on-v6 { any; };
+	};
+	```
+
++ Berlint
+	script:
+	```
+	cp ~/no5/named.conf.options /etc/bind/named.conf.options
+	cp ~/no5/named.conf.local /etc/bind/named.conf.local
+	mkdir /etc/bind/operation/operation.wise.A02.com
+	cp ~/no5/operation.wise.A02.com /etc/bind/operation/operation.wise.A02.com
+	service bind9 restart
+	```
+
+	isi ~/no5/named.conf.options:
+	```
+	zone "wise.A02.com" {
+		type slave;
+		masters { 10.0.2.2; };
+		file "/var/lib/bind/wise.A02.com";
+	};
+
+	zone "operation.wise.A02.com" {
+		type master;
+		file "/etc/bind/operation/operation.wise.A02.com";
+	};
+	```
+
+	isi ~/no5/named.conf.local:
+	```
+	options {
+		directory "/var/cache/bind";
+
+		//dnssec-validation auto;
+		allow-query{ any; };
+
+		auth-nxdomain no;    # conform to RFC1035
+		listen-on-v6 { any; };
+	};
+	```
+
+	isi ~/no5/operation.wise.A02.com:
+	```
+	;
+	; BIND data file for local loopback interface
+	;
+	$TTL    604800
+	@       IN      SOA     operation.wise.A02.com. root.operation.wise.A02.com. (
+				 2022102601         ; Serial
+						 604800         ; Refresh
+							86400         ; Retry
+						2419200         ; Expire
+						 604800 )       ; Negative Cache TTL
+	;
+	@       IN      NS      operation.wise.A02.com.
+	@       IN      A       10.0.3.3
+	www     IN      CNAME   operation.wise.A02.com.
+	```
+
+7. Untuk informasi yang lebih spesifik mengenai Operation Strix, buatlah subdomain melalui Berlint dengan akses strix.operation.wise.A02.com dengan alias www.strix.operation.wise.A02.com yang mengarah ke Eden
++ Berlint
+	script:
+	```
+	cp ~/no6/operation.wise.A02.com /etc/bind/operation/operation.wise.A02.com
+	service bind9 restart
+	```
+
+	isi ~/no6/operation.wise.A02.com:
+	```
+	;
+	; BIND data file for local loopback interface
+	;
+	$TTL    604800
+	@       IN      SOA     operation.wise.A02.com. root.operation.wise.A02.com. (
+				 2022102601         ; Serial
+						 604800         ; Refresh
+							86400         ; Retry
+						2419200         ; Expire
+						 604800 )       ; Negative Cache TTL
+	;
+	@       				IN      NS      operation.wise.A02.com.
+	@       				IN      A       10.0.3.3
+	www     				IN      CNAME   operation.wise.A02.com.
+	strix   				IN      A       10.0.3.3
+	www.strix       IN      CNAME   strix.operation.wise.A02.com.
+	```
+
+8. Setelah melakukan konfigurasi server, maka dilakukan konfigurasi Webserver. Pertama dengan webserver www.wise.A02.com. Pertama, Loid membutuhkan webserver dengan DocumentRoot pada /var/www/wise.A02.com
+
+9. Setelah itu, Loid juga membutuhkan agar url www.wise.A02.com/index.php/home dapat menjadi menjadi www.wise.A02.com/home
+
+10. Setelah itu, pada subdomain www.eden.wise.A02.com, Loid membutuhkan penyimpanan aset yang memiliki DocumentRoot pada /var/www/eden.wise.A02.com
+
+11. Akan tetapi, pada folder /public, Loid ingin hanya dapat melakukan directory listing saja
+
+12. Tidak hanya itu, Loid juga ingin menyiapkan error file 404.html pada folder /error untuk mengganti error kode pada apache
+
+13. Loid juga meminta Franky untuk dibuatkan konfigurasi virtual host. Virtual host ini bertujuan untuk dapat mengakses file asset www.eden.wise.A02.com/public/js menjadi www.eden.wise.A02.com/js
+
+14. Loid meminta agar www.strix.operation.wise.A02.com hanya bisa diakses dengan port 15000 dan port 15500
+
+15. dengan autentikasi username Twilight dan password opStrix dan file di /var/www/strix.operation.wise.A02
+
+16. dan setiap kali mengakses IP Eden akan dialihkan secara otomatis ke www.wise.A02.com
+
+17. Karena website www.eden.wise.A02.com semakin banyak pengunjung dan banyak modifikasi sehingga banyak gambar-gambar yang random, maka Loid ingin mengubah request gambar yang memiliki substring “eden” akan diarahkan menuju eden.png. Bantulah Agent Twilight dan Organisasi WISE menjaga perdamaian!
 
 
-
-### D Reverse DNS (Record PTR)
-
-Jika pada pembuatan domain sebelumnya DNS server kita bekerja menerjemahkan string domain **wise.A02.com** kedalam alamat IP agar dapat dibuka, maka Reverse DNS atau Record PTR digunakan untuk menerjemahkan alamat IP ke alamat domain yang sudah diterjemahkan sebelumnya.
-
-- Edit file **/etc/bind/named.conf.local** pada *WISE*
-
-  ```
-  nano /etc/bind/named.conf.local
-  ```
-
-- Lalu tambahkan konfigurasi berikut ke dalam file **named.conf.local**. Tambahkan reverse dari 3 byte awal dari IP yang ingin dilakukan Reverse DNS. Karena di contoh saya menggunakan IP `10.0.3` untuk IP dari records, maka reversenya adalah `3.0.10` 
-
-  ```
-  zone "3.0.10.in-addr.arpa" {
-      type master;
-      file "/etc/bind/wise/3.0.10.in-addr.arpa";
-  };
-  ```
-
-![](images/6-1.png)
-
-- Copykan file **db.local** pada path **/etc/bind** ke dalam folder **wise** yang baru saja dibuat dan ubah namanya menjadi **3.0.10.in-addr.arpa**
-
-  ```
-  cp /etc/bind/db.local /etc/bind/wise/3.0.10.in-addr.arpa
-  ```
-
-  *Keterangan 3.0.10 adalah 3 byte pertama IP WISE yang dibalik urutan penulisannya*
-
-- Edit file **3.0.10.in-addr.arpa** menjadi seperti gambar di bawah ini
-
-
-![konfig](images/7-1.png)
-
-- Kemudian restart bind9 dengan perintah 
-
-  ```
-  service bind9 restart
-  ```
-
-- Untuk mengecek apakah konfigurasi sudah benar atau belum, lakukan perintah berikut pada client *SSS* 
-
-  ```
-  // Install package dnsutils
-  // Pastikan nameserver di /etc/resolv.conf telah dikembalikan sama dengan nameserver dari Foosha
-  apt-get update
-  apt-get install dnsutils
-  
-  //Kembalikan nameserver agar tersambung dengan WISE
-  host -t PTR "IP WISE"
-  ```
-
-![host](images/8-1.png)
-
-
-
-### E Record CNAME
-Record CNAME adalah sebuah record yang membuat alias name dan mengarahkan domain ke alamat/domain yang lain.
-
-Langkah-langkah membuat record CNAME:
-
-- Buka file **wise.A02.com** pada server *WISE* dan tambahkan konfigurasi seperti pada gambar berikut:
-
-
-![DNS](images/9-1.png)
-
-
-
-- Kemudian restart bind9 dengan perintah
-
-  ```
-  service bind9 restart
-  ```
-
-- Lalu cek dengan melakukan `host -t CNAME www.wise.A02.com` atau `ping www.wise.A02.com -c 5`. Hasilnya harus mengarah ke host dengan IP *WISE*.
-
-
-![DNS](images/10-1.png)
+## Kendala
+Kendala ketika pengerjaan praktikum adalah penyimpanan perintah-perintah yang dijalankan. Terjadi beberapa kesalahan sehingga harus diulang dari awal karena penyimpanan perintah dah file konfigurasi tidak tepat. Selain itu, perlu ketelitian dalam pengerjaan dan kejelian dalam proses debugging yang cukup memakan waktu. Terkadang terdapat masalah jaringan pada GNS3 sehingga bug yang ada bukan dari kesalahan penulisan, tetapi dari koneksi internet. Untuk itu, teman kami Bima menemukan cara, yaitu dengan menjalankan perintah ping agar dapat memantau koneksi internet.
