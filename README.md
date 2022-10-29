@@ -348,6 +348,32 @@ Kelompok A02
 
 10. Setelah itu, pada subdomain www.eden.wise.A02.com, Loid membutuhkan penyimpanan aset yang memiliki DocumentRoot pada /var/www/eden.wise.A02.com
 
++ EDEN
+	script:
+	```
+	apt-get install -y libapache2-mod-php7.0
+	cp ~/no9/000-default.conf /etc/apache2/sites-available/000-default.conf
+	mkdir /var/www/eden.wise.A02.com
+	cp -r ~/res/eden.wise/* /var/www/eden.wise.A02.com/
+	service apache9 restart
+	```
+	
+	000-default.conf
+	```
+	<VirtualHost *:80>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/eden.wise.A02.com
+        ServerName eden.wise.A02.com
+        ServerAlias www.eden.wise.A02.com
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+	</VirtualHost>
+
+	```
+
 11. Akan tetapi, pada folder /public, Loid ingin hanya dapat melakukan directory listing saja
 
 12. Tidak hanya itu, Loid juga ingin menyiapkan error file 404.html pada folder /error untuk mengganti error kode pada apache
