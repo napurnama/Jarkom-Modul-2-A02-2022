@@ -446,6 +446,41 @@ Kelompok A02
 
 13. Loid juga meminta Franky untuk dibuatkan konfigurasi virtual host. Virtual host ini bertujuan untuk dapat mengakses file asset www.eden.wise.A02.com/public/js menjadi www.eden.wise.A02.com/js
 
++ Eden
+	script:
+	```
+	cp ~/no11/000-default.conf /etc/apache2/sites-available/000-default.conf
+	service apache9 restart
+	```
+	
+	000-default.conf
+	```
+	<VirtualHost *:80>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/eden.wise.A02.com
+        ServerName eden.wise.A02.com
+        ServerAlias www.eden.wise.A02.com
+
+        <Directory /var/www/eden.wise.A02.com/error>
+                Options -Indexes
+        </Directory>
+
+        <Directory /var/www/eden.wise.A02.com/public>
+                Options +Indexes
+        </Directory>
+
+        Alias "/js" "/var/www/eden.wise.A02.com/public/js"
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        ErrorDocument 404 /error/404.html
+
+	</VirtualHost>
+
+	```
+
 14. Loid meminta agar www.strix.operation.wise.A02.com hanya bisa diakses dengan port 15000 dan port 15500
 
 15. dengan autentikasi username Twilight dan password opStrix dan file di /var/www/strix.operation.wise.A02
